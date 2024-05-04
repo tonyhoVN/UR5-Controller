@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>  
+  <!-- Start simulation environment and controllers -->
+  <include file="$(dirname)/system.launch"/>
+
+  <!-- Start controller node-->
+  <node pkg="assignment_ur" type="assignment1.py" name="ur5_sinewave" output="screen"/>
+
+</launch>

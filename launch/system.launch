@@ -9,7 +9,7 @@
 
   <!-- Controller configuration -->
   <arg name="controller_config_file" default="$(find assignment_ur)/config/ur5_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
-  <arg name="controllers" default="eff_joint_traj_controller" doc="Controllers that are activated."/>
+  <arg name="controllers" default="joint_state_controller eff_joint_traj_controller" doc="Group of controllers that are activated."/>
   <arg name="stopped_controllers" default="joint_group_eff_controller" doc="Controllers that are initally loaded, but not started."/>
 
   <!-- robot_state_publisher configuration -->
@@ -17,7 +17,7 @@
   <arg name="tf_pub_rate" default="60" doc="Rate at which robot_state_publisher should publish transforms."/>
 
   <!-- Gazebo parameters -->
-  <arg name="paused" default="false" doc="Starts Gazebo in paused mode" />
+  <arg name="paused" default="true" doc="Starts Gazebo in paused mode" />
   <arg name="gui" default="true" doc="Starts Gazebo gui" />
 
   <!-- Load urdf on the parameter server -->
@@ -28,10 +28,10 @@
     <arg name="visual_params" value="$(arg visual_params)"/>
   </include>
 
-  <!-- Start the 'driver' (ie: Gazebo in this case) -->
+  <!-- Start simulation environment and controllers -->
   <include file="$(dirname)/ur_controller.launch.xml">
     <arg name="controller_config_file" value="$(arg controller_config_file)"/>
-    <!-- <arg name="controllers" value="$(arg controllers)"/> -->
+    <arg name="controllers" value="$(arg controllers)"/>
     <arg name="gui" value="$(arg gui)"/>
     <arg name="paused" value="$(arg paused)"/>
     <arg name="stopped_controllers" value="$(arg stopped_controllers)"/>
