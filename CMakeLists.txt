@@ -27,7 +27,7 @@ catkin_install_python(PROGRAMS scripts/assignment1.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-catkin_install_python(PROGRAMS scripts/test.py
+catkin_install_python(PROGRAMS scripts/test1.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

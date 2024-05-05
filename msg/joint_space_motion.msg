@@ -1,0 +1,8 @@
+Header header
+float64[] joints1
+float64[] joints2
+float64[] joints_vel 
+float64[] joints_acc
+---
+bool result
+string msg
