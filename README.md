@@ -1,10 +1,11 @@
 # ASSIGNMENT OF TONY HO
+This package is used for ROS Melodic in Ubuntu18.04
 
 ## I. Setup Environment
-
-### 1. Install UR industrial ros
+### 1. Install Dependences
 ```
 sudo apt-get install ros-$ROS_DISTRO-universal-robots
+sudo apt-get install ros-melodic-tf*
 ```
 ### 2. Build the ur5-controller package
 1. Clone package into src of your workspace

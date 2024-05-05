@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find ur_gazebo)/launch/inc/load_ur5.launch.xml"/>
+  <include file="$(find ur_gazebo)/launch/ur5_bringup.launch"/>
+</launch>

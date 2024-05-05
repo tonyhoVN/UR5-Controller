@@ -13,7 +13,6 @@ class UR5Controller:
     def __init__(self):
         rospy.init_node('ur5_joint_controller')
         # client 
-        self.client 
         pass
 
 

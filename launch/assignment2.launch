@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>  
+  <!-- Start simulation environment and controllers -->
+  <include file="$(dirname)/system.launch">
+    <arg name="paused" value="false"/>
+  </include>
+
+  <!-- Start controller node-->
+  <node pkg="assignment_ur" type="UR5_service.py" name="ur5_custom_service" output="screen"/>
+
+</launch>

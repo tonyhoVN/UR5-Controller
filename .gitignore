@@ -5,6 +5,7 @@ build/
 bin/
 lib/
 __pycache__
+*.pyc
 
 # Catkin custom files
 CATKIN_IGNORE

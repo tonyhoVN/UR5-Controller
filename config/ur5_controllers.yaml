@@ -1,7 +1,9 @@
+# Publish all joint states
 joint_state_controller:
   type: joint_state_controller/JointStateController
   publish_rate: &loop_hz 60
 
+# Effort trajectory controller
 eff_joint_traj_controller:
   type: effort_controllers/JointTrajectoryController
   joints: &robot_joints
@@ -11,7 +13,7 @@ eff_joint_traj_controller:
     - wrist_1_joint
     - wrist_2_joint
     - wrist_3_joint
-  gains: # Required because we're controlling an effort interface
+  gains: &pid_gains # Required because we're controlling an effort interface
     shoulder_pan_joint: {p: 4000,  d: 200, i: 1, i_clamp: 1}
     shoulder_lift_joint: {p: 10000,  d: 200, i: 1, i_clamp: 1}
     elbow_joint: {p: 2000,  d: 20, i: 1, i_clamp: 1}
@@ -31,6 +33,20 @@ eff_joint_traj_controller:
   state_publish_rate: *loop_hz
   action_monitor_rate: 10
 
+# Joint position controller 
+joint_position_controller:
+  type: effort_controllers/JointPositionController
+  joints:
+    - shoulder_pan_joint
+    - shoulder_lift_joint
+    - elbow_joint
+    - wrist_1_joint
+    - wrist_2_joint
+    - wrist_3_joint
+  gains: *pid_gains
+  state_publish_rate: *loop_hz
+
+# Effort controller
 joint_group_eff_controller:
   type: effort_controllers/JointGroupEffortController
   joints: *robot_joints
