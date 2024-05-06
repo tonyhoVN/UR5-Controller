@@ -32,20 +32,7 @@ eff_joint_traj_controller:
   stop_trajectory_duration: 0.5
   state_publish_rate: *loop_hz
   action_monitor_rate: 10
-
-# Joint position controller 
-joint_position_controller:
-  type: effort_controllers/JointPositionController
-  joints:
-    - shoulder_pan_joint
-    - shoulder_lift_joint
-    - elbow_joint
-    - wrist_1_joint
-    - wrist_2_joint
-    - wrist_3_joint
-  gains: *pid_gains
-  state_publish_rate: *loop_hz
-
+  
 # Effort controller
 joint_group_eff_controller:
   type: effort_controllers/JointGroupEffortController

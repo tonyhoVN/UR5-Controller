@@ -29,3 +29,17 @@ Joints of robot move as sine wave function around its home position (vertical po
 roslaunch assignment_ur assignment1.launch
 ```
 2. Start simulation: go to gazebo gui and press the "play" button to see the result
+
+### Problem2: Joint Space and Cartesian Space Trajectory 
+The trajectory in this problem is generated as trapezoidal profile. 
+1. Joint space motion: perform trapezoidal motion between 2 point in joint space 
+- start position
+- final position
+- maximum joint velocity
+- maximum joint acceleration
+
+2. Cartesian space motion: perform trapezoidal motion between 2 point in task space -> Use IK solver (KDL) to convert to joint space
+- start position
+- final position
+- maximum linear velocity
+- maximum linear acceleration

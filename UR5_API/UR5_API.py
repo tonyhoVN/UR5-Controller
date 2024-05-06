@@ -6,16 +6,7 @@ from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryG
 from sensor_msgs.msg import JointState
 import rospy
 import tf
-
-def get_msg(topic, topic_type, timeout = 3):
-    msg = None
-    try:
-        msg = rospy.wait_for_message(topic, topic_type, timeout)
-    except:
-        print("Topic %s has not been start" %topic_type)
-    return msg    
-    
-    
+from assignment_ur.srv import *
 
 def get_joint_state():
     """
@@ -28,9 +19,15 @@ def get_joint_state():
     float64[] velocity
     float64[] effort
     """
-    state = get_msg("/joints_state", JointState)
-    
-    return state
+    # Create controller object
+    client = rospy.ServiceProxy('/ur5_custom_service/get_robot_state', GetState)
+    srv = GetStateRequest()
+    result = client.call(srv)
+    if result:
+        return result.state
+    else:
+        raise("Cannot get joint state")
+
 
 def get_posj():
     """

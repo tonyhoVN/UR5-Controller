@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "control_msgs/JointTrajectoryAction.h"
+#include "control_msgs/FollowJointTrajectoryAction.h"
 
 
 
