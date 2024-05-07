@@ -37,12 +37,12 @@ struct SingleTrajectory {
 class TrajectoryGenerator
 {
 public:
-    TrajectoryGenerator(const std::vector<double>& start, const std::vector<double>& end,
-                        double max_vel, double max_acc, double timestep);
+    TrajectoryGenerator();
 
     Trajectory getTrajectory();
     void clearTrajectory();
-    void setParameters();
+    void setParameters(const std::vector<double>& start, const std::vector<double>& end,
+                        double max_vel, double max_acc, double timestep);
     void generateTrapezoidalTrajectory();
     void generateJointSpaceTrajectory(trajectory_msgs::JointTrajectory& traj_out);
 
@@ -52,6 +52,8 @@ private:
     std::vector<double> start_point, end_point;
     double max_velocity, max_acceleration;
     double time_step;
+
+    void transposeMatrix(std::vector<std::vector<double>>& matrix);
 
 }; // trajectory generation class
 

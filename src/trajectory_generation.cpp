@@ -149,8 +149,8 @@ private:
 
 
 int main() {
-    JointPoint start{{1,1}};
-    JointPoint end{{2,2}};
+    JointPoint start{{1}};
+    JointPoint end{{2}};
     TrapezoidalMotion motion(start, end, 2, 3);
 
     Trajectory trajectory = motion.generateTrajectory(0.1);

@@ -23,7 +23,7 @@ public:
     bool getRobotState(assignment_ur::GetState::Request &request,
                        assignment_ur::GetState::Response &response)
     {
-        // wait for 
+        // wait for joint_states message
         auto msg = ros::topic::waitForMessage<sensor_msgs::JointState>("/joint_states", nh, ros::Duration(1.0));
         if (msg)
         {
@@ -40,7 +40,11 @@ public:
     bool moveJointSpace(assignment_ur::JointSpaceMotion::Request &request,
                         assignment_ur::JointSpaceMotion::Response &response)
     {
-        
+        // wait for 
+        auto start = request.joints1;
+        request.joints2;
+        request.joints_acc;
+        request.joints_vel;
     }
 
     bool moveCartesianSpace(assignment_ur::CartesianSpaceMotion::Request &request,
