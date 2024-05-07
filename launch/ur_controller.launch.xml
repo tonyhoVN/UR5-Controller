@@ -36,7 +36,7 @@
     output="screen" respawn="false"/>
 
   <!-- Load and start the controllers listed in the 'controllers' arg. -->
-  <arg name="node_start_delay" default="5.0" /> 
+  <arg name="node_start_delay" default="1.0" /> 
   <node name="ros_control_controller_spawner" pkg="controller_manager" type="spawner"
     args="$(arg controllers)" output="screen" respawn="false"/>
 

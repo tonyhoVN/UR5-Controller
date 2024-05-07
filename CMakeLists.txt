@@ -10,8 +10,12 @@ find_package(catkin REQUIRED COMPONENTS
     sensor_msgs
     trajectory_msgs
     message_generation
+    actionlib
+    orocos_kdl
+    kdl_parser
+    tf
 )
-find_package(orocos_kdl REQUIRED)
+# find_package(orocos_kdl REQUIRED)
 
 ## ROS Service
 add_service_files(
@@ -19,6 +23,7 @@ add_service_files(
   GetState.srv
   JointSpaceMotion.srv
   CartesianSpaceMotion.srv
+  MoveHome.srv
 )
 
 ## ROS Message
@@ -34,7 +39,7 @@ add_library(trajectory_generator
 )
 target_link_libraries(trajectory_generator
   ${catkin_LIBRARIES}
-  ${orocos_kdl_INCLUDE_DIRS}
+  # ${orocos_kdl_INCLUDE_DIRS}
 )
 
 ## Declare a catkin package
@@ -49,21 +54,25 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${orocos_kdl_INCLUDE_DIRS}
+  # ${orocos_kdl_INCLUDE_DIRS}
 )
 
 #############
 ## Build   ##
 #############
 add_executable(UR5_service src/UR5_service.cpp)
-target_link_libraries(UR5_service ${catkin_LIBRARIES})
+target_link_libraries(UR5_service 
+  ${catkin_LIBRARIES}
+  trajectory_generator
+  # ${orocos_kdl_LIBRARIES}
+)
 add_dependencies(UR5_service assignment_ur_gencpp)
 
 add_executable(test_lib src/test_lib.cpp)
 target_link_libraries(test_lib 
   ${catkin_LIBRARIES} 
   trajectory_generator
-  ${orocos_kdl_LIBRARIES}
+  # ${orocos_kdl_LIBRARIES}
 )
 
 #############

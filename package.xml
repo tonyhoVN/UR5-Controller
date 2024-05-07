@@ -15,7 +15,10 @@
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>trajectory_msgs</depend>
+  <depend>actionlib</depend>
   <depend>orocos_kdl</depend>
+  <depend>kdl_parser</depend>
+  <depend>tf</depend>
   <depend>liborocos-kdl-dev</depend>
 
   <build_depend>message_generation</build_depend>
