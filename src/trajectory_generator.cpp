@@ -1,6 +1,6 @@
 #include "trajectory_generator.hpp"
 
-namespace tracjectory_generator
+namespace trajectory_generator
 {
 
 ///////// IKSOLVER CLASS /////////////
@@ -46,12 +46,14 @@ int IKSolver::findIKJointGoalPoint(const std::vector<double>& current_jnt_pos,
 
     // Set current joint 
     for (int i=0; i < num_jnt; i++) {q_current(i) = current_jnt_pos[i];}
+    
+    // std::cout << "Current joint: ";
+    // for (int i=0; i < num_jnt; i++) {std::cout << q_current(i) << " ";}
+    // std::cout << std::endl;
 
     // Get current cartesian pos by FK
     KDL::Frame cart_pos_current;
     fk_solver_->JntToCart(q_current, cart_pos_current);
-
-    std::cout << "FK result: " << cart_pos_current.p(0) << " " << cart_pos_current.p(1) << " " << cart_pos_current.p(2) << " " << std::endl;
 
     // Set cartesian goal point
     KDL::Vector p_cart_pos_target(target_cart_pos[0], target_cart_pos[1], target_cart_pos[2]); // xyz of goal 
@@ -60,25 +62,42 @@ int IKSolver::findIKJointGoalPoint(const std::vector<double>& current_jnt_pos,
     KDL::Frame cart_pos_target(cart_pos_current.M, p_cart_pos_target);
     KDL::Twist cart_vel_target(p_cart_vel_target, r_cart_vel_target);
 
+    // std::cout << "Target Cart: ";
+    // for (int i=0; i < 3; i++) {std::cout << p_cart_pos_target(i) << " ";}
+    // {std::cout << cart_pos_current.M.data << " ";}
+    // std::cout << std::endl;
+    // std::cout << "Target Vel: ";
+    // for (int i=0; i < 3; i++) {std::cout << p_cart_vel_target(i) << " ";}
+    // std::cout << std::endl;
+
     // IK pos
     int result_pos = pos_ik_solver_->CartToJnt(q_current, cart_pos_target, q_target);
     if (result_pos < 0) {
         std::cerr << "Cannot solve IK for position" << std::endl;
-        return 2;
     } 
-
-    target_jnt_pos.clear();
-    for (int i=0; i < num_jnt; i++) {target_jnt_pos.push_back(q_target(i));}
 
     // IK vel
     int result_vel = vel_ik_solver_->CartToJnt(q_target, cart_vel_target, q_dot_target);
     if (result_vel < 0) {
         std::cerr << "Cannot solve IK for velocity" << std::endl;
-        return 2;
     } 
 
+    if (result_pos < 0 || result_vel < 0) {return 2;}
+
+    // Save results of IK solver 
     target_jnt_pos.clear();
     for (int i=0; i < num_jnt; i++) {target_jnt_pos.push_back(q_target(i));}
+
+    // std::cout << "Goal Joint: ";
+    // for (auto pos: target_jnt_pos) {std::cout << pos << " ";}
+    // std::cout << std::endl;
+
+    target_jnt_vel.clear();
+    for (int i=0; i < num_jnt; i++) {target_jnt_vel.push_back(q_dot_target(i));}
+    
+    // std::cout << "Vel: ";
+    // for (auto vel: target_jnt_vel) {std::cout << vel << " ";}
+    // std::cout << std::endl;
     
     return 0;
 }
@@ -245,8 +264,8 @@ void TrajectoryGenerator::generateJointSpaceTrajectory(trajectory_msgs::JointTra
 }
 
 void TrajectoryGenerator::generateCartesianSpaceTrajectory(IKSolver& ik_solver, 
-                                                           const std::vector<double>& current_joint_pos,
                                                            trajectory_msgs::JointTrajectory& traj_out, 
+                                                           const std::vector<double>& current_joint_pos,
                                                            double time_from_start)
 {
     if (max_velocity==0 || max_acceleration==0 || time_step==0 || start_point.size()==0 || end_point.size()==0) {
@@ -261,29 +280,58 @@ void TrajectoryGenerator::generateCartesianSpaceTrajectory(IKSolver& ik_solver,
     std::vector<double> time_stamps = final_trajectory_->time_stamps; // number of time steps
     size_t num_coor = final_trajectory_->total_points.size(); // number of cartesian coordinates (3)
 
+    std::vector<double> start_joint_pos = current_joint_pos;
+
     for (size_t i = 0; i < final_trajectory_->time_stamps.size(); i++) {
-        
         // Solver IK from Cartestian point to Joint Space
-        std::vector<double> target_car_pos(final_trajectory_->total_points[i]);
-        std::vector<double> target_car_vel(final_trajectory_->velocities[i]);
+        std::vector<double> target_car_pos = std::move(final_trajectory_->total_points[i]);
+        std::vector<double> target_car_vel = std::move(final_trajectory_->velocities[i]);
         std::vector<double> target_jnt_pos;
         std::vector<double> target_jnt_vel;
-        int result = ik_solver.findIKJointGoalPoint(current_joint_pos,
-                                       target_car_pos,
-                                       target_car_vel,
-                                       target_jnt_pos,
-                                       target_jnt_vel);
-
+        int result = ik_solver.findIKJointGoalPoint(start_joint_pos,
+                                                    target_car_pos,
+                                                    target_car_vel,
+                                                    target_jnt_pos,
+                                                    target_jnt_vel);
         if (result != 0) continue;
         
         // Make a JointTrajectoryPoint
         trajectory_msgs::JointTrajectoryPoint joint_traj_point;
         joint_traj_point.positions  = target_jnt_pos;
         joint_traj_point.velocities = target_jnt_vel;
+        // joint_traj_point.velocities = {0, 0, 0, 0, 0, 0};
         joint_traj_point.time_from_start = ros::Duration(final_trajectory_->time_stamps[i] + time_from_start);
         traj_out.points.push_back(joint_traj_point);
+
+        // Set start joint pos to target_joint pos to make continuous solution
+        start_joint_pos = target_jnt_pos;
     }
+
+}
+
+void TrajectoryGenerator::generateCartesianSpaceTrajectory(IKSolver& ik_solver,
+                                    trajectory_msgs::JointTrajectory& traj_out,
+                                    const std::vector<double>& current_jnt_pos, 
+                                    const std::vector<double>& target_cart_pos,
+                                    const std::vector<double>& target_cart_vel,
+                                    double time_from_start) 
+{
+    std::vector<double> target_jnt_pos;
+    std::vector<double> target_jnt_vel;
     
+    int result = ik_solver.findIKJointGoalPoint(current_jnt_pos,
+                                                target_cart_pos,
+                                                target_cart_vel,
+                                                target_jnt_pos,
+                                                target_jnt_vel);
+    if (result != 0) return;
+    
+    // Make a JointTrajectoryPoint
+    trajectory_msgs::JointTrajectoryPoint joint_traj_point;
+    joint_traj_point.positions  = target_jnt_pos;
+    joint_traj_point.velocities = {0, 0, 0, 0, 0, 0};
+    joint_traj_point.time_from_start = ros::Duration(time_from_start);
+    traj_out.points.push_back(joint_traj_point);
 }
 
 

@@ -3,14 +3,20 @@
 #include <ros/ros.h>
 #include <ros/package.h>
 #include "sensor_msgs/JointState.h"
+#include "control_msgs/JointTrajectoryControllerState.h"
 #include <tf/transform_listener.h>
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "ur5_server");
+    ros::init(argc, argv, "test_ur5");
     ros::NodeHandle nh;
     ros::Publisher goal_joint_pub = nh.advertise<trajectory_msgs::JointTrajectory>("/eff_joint_traj_controller/command", 1);
-    tracjectory_generator::TrajectoryGenerator traj_gen;
+    trajectory_generator::TrajectoryGenerator traj_gen;
+
+    std::string base_link = "base_link";
+    std::string end_effector = "tool0";
+
+    ///////////////////////////////////////////////////////////////////
 
     // // get current state
     // auto joint_state = ros::topic::waitForMessage<sensor_msgs::JointState>("/joint_states", nh, ros::Duration(1.0));
@@ -58,20 +64,20 @@ int main(int argc, char** argv)
 	urdf_path += "/urdf/ur5_robot.urdf";
 
     // create IKSolver 
-    tracjectory_generator::IKSolver ik_solver(urdf_path, 6, "base_link", "wrist_3_link");
+    trajectory_generator::IKSolver ik_solver(urdf_path, 6, base_link, end_effector);
     
     // get current joint state 
-    auto joint_state = ros::topic::waitForMessage<sensor_msgs::JointState>("/joint_states", nh, ros::Duration(1.0));
-    std::vector<double> current_jnt_pos = std::move(joint_state->position);
+    auto joint_state = ros::topic::waitForMessage<control_msgs::JointTrajectoryControllerState>("/eff_joint_traj_controller/state", nh, ros::Duration(1.0));
+    std::vector<double> current_jnt_pos = std::move(joint_state->actual.positions);
     
     // get current cart_pos 
     tf::TransformListener tf_;
-    tf_.waitForTransform("base_link", "wrist_3_link", ros::Time::now(), ros::Duration(1.0));
+    tf_.waitForTransform(base_link, end_effector, ros::Time::now(), ros::Duration(1.0));
     tf::StampedTransform transform;
     double x,y,z;
     try {
         // Get the transform from "base_link" to "wrist_3_link"
-        tf_.lookupTransform("base_link", "wrist_3_link", ros::Time(0), transform);
+        tf_.lookupTransform(base_link, end_effector, ros::Time(0), transform);
         x = transform.getOrigin().getX();
         y = transform.getOrigin().getY();
         z = transform.getOrigin().getZ();
@@ -85,15 +91,23 @@ int main(int argc, char** argv)
 
     // Set target for trajectory planning 
     std::vector<double> start{x, y, z};
-    std::vector<double> end{x,y,z-0.5};
-    double max_vel = 0.1;
-    double max_acc = 0.2;
+    std::vector<double> end{x, y ,z-0.2};
+    double max_vel = 0.05;
+    double max_acc = 0.05;
     double time_step = 0.2;
-
+    std::vector<double> target_vel{0,0,0};
+    std::vector<double> target_pos{0.487502, 0.109205, 0.509818};
+    
     // setup generator
     trajectory_msgs::JointTrajectory goal_traj;
+    goal_traj.joint_names = std::move(joint_state->joint_names);
+
     traj_gen.setParameters(start,end,max_vel,max_acc,time_step);
-    traj_gen.generateCartesianSpaceTrajectory(ik_solver, current_jnt_pos, goal_traj);
+    
+    // traj_gen.generateCartesianSpaceTrajectory(ik_solver, goal_traj, current_jnt_pos, target_pos, target_vel,1);
+    
+    traj_gen.generateCartesianSpaceTrajectory(ik_solver, goal_traj, current_jnt_pos);
+    
     goal_joint_pub.publish(goal_traj);
     
     return 0;
