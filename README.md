@@ -27,7 +27,7 @@ This package is built on ROS Melodic in Ubuntu18.04
         ![Image Description](image/gazebo_gui.jpg)
 
 ### Problem2: Joint Space and Cartesian Space Trajectory 
-- The trajectory in this problem is generated as trapezoidal profile. For simple execution, it is assumed all joints share the same velocity and acceleration. The time step between points in trajectory is 0.2 seconds. 
+- The trajectory in this problem is generated as trapezoidal profile. For simple execution, it is assumed all joints share the same maximum velocity and acceleration. The time step between points in trajectory is 0.2 seconds. The library trajectory_generator.h includes function to generate trajectory and implement invert kinematic solver (KDL IK solver) 
 - Execution process:
     - Step1: Launch simulation environment
         ```

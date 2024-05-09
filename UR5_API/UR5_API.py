@@ -81,8 +81,8 @@ def move_cartesian_space(point1=[], point2=[], linear_vel_max=50, linear_acc_max
     Move robot in cartesian space 
     point1: point [x,y,z] in start position
     point2: point [x,y,z] in end position
-    joint_vel_max: maximum linear velocity
-    joint_acc_max: maximum linear acceleration
+    linear_vel_max: maximum linear velocity
+    linear_acc_max: maximum linear acceleration
     """
     msg = CartesianSpaceMotionRequest()
     msg.point1 = point1
