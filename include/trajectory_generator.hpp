@@ -16,8 +16,9 @@
 #include <kdl/velocityprofile_trap.hpp>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
+#include <cmath>
 
-namespace tracjectory_generator
+namespace trajectory_generator
 {
 
 struct Trajectory {
@@ -33,6 +34,14 @@ struct SingleTrajectory {
     std::vector<double> acceleration;
     std::vector<double> time_stamps;
 };
+
+double deg_to_rad(double degrees) {
+    return degrees * M_PI / 180.0;
+}
+
+double rad_to_deg(double rad) {
+    return rad / M_PI * 180.0;
+}
 
 class IKSolver
 {
@@ -75,9 +84,16 @@ public:
     void generateTrapezoidalTrajectory();
     void generateJointSpaceTrajectory(trajectory_msgs::JointTrajectory& traj_out, double time_from_start = 0.0);
     void generateCartesianSpaceTrajectory(IKSolver& ik_solver, 
-                                          const std::vector<double>& current_joint_pos,
                                           trajectory_msgs::JointTrajectory& traj_out, 
+                                          const std::vector<double>& current_joint_pos,
                                           double time_from_start = 0.0);
+    
+    void generateCartesianSpaceTrajectory(IKSolver& ik_solver,
+                                          trajectory_msgs::JointTrajectory& traj_out,
+                                        const std::vector<double>& current_jnt_pos, 
+                                        const std::vector<double>& target_cart_pos,
+                                        const std::vector<double>& target_cart_vel,
+                                        double time_from_start = 0.0);
 
 private:
     std::shared_ptr<std::vector<std::shared_ptr<KDL::VelocityProfile_Trap>>> trap_generators_;

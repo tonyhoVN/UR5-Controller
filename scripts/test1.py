@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 
 import os, sys
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.join(current_dir, "../")
-sys.path.append(current_dir)
-sys.path.append(parent_dir)
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# parent_dir = os.path.join(current_dir, "../")
+# sys.path.append(current_dir)
+# sys.path.append(parent_dir)
 from assignment_ur.srv import GetState
 
 import rospy 
-import tf 
+from UR5_API import ur5
 
-if __name__ == '__main__':
-    print("hello1")
+
+print(ur5.get_joint_name())
+
 
     # listener = tf.TransformListener()
 

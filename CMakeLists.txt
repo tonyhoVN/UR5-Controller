@@ -15,7 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
     kdl_parser
     tf
 )
+
 # find_package(orocos_kdl REQUIRED)
+catkin_python_setup()
 
 ## ROS Service
 add_service_files(
@@ -92,23 +94,28 @@ install(TARGETS trajectory_generator
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
 
-# Python files
+# # Python file
+
 catkin_install_python(PROGRAMS scripts/assignment1.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-catkin_install_python(PROGRAMS scripts/test1.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+# catkin_install_python(PROGRAMS scripts/test1.py
+#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
-catkin_install_python(PROGRAMS scripts/UR5_service.py
+catkin_install_python(PROGRAMS 
+  # UR5_API/__init__.py  
+  UR5_API/UR5_API.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 # Additional files 
-install(DIRECTORY 
-  UR5_API
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(DIRECTORY UR5_API/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/UR5_API
+  FILES_MATCHING PATTERN "*.py"
+  PATTERN "__pycache__" EXCLUDE
+)
 
 install(DIRECTORY
   urdf 

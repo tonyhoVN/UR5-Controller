@@ -65,10 +65,13 @@ public:
 
         auto result = move_home_client.waitForResult();
         if (result) {
-            ROS_INFO("ROBOT is in HOME position");
+            response.msg = "ROBOT is in HOME position";
             return true;
         }
-        else return false;
+        else {
+            response.msg = "Cannot come back home";
+            return false;
+        }
     }
 
     bool getRobotState(assignment_ur::GetState::Request &request,

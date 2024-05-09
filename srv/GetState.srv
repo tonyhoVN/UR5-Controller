@@ -1,2 +1,5 @@
 ---
-sensor_msgs/JointState state
+string[] joints_name
+float64[] posj
+float64[] posx
+
