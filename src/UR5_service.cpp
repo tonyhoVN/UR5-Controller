@@ -14,6 +14,66 @@
 
 #define PI 3.14
 
+// Function to convert degrees to radians for a single double
+double deg_to_rad(double degrees) {
+    return degrees * (PI / 180.0);
+}
+
+// Function to convert radians to degrees for a single double
+double rad_to_deg(double radians) {
+    return radians * (180.0 / PI);
+}
+
+// Function to convert degrees to radians for a vector of doubles
+std::vector<double> deg_to_rad(const std::vector<double>& degrees) {
+    std::vector<double> radians;
+    radians.reserve(degrees.size());
+    for (double degree : degrees) {
+        radians.push_back(degree * (PI / 180.0));
+    }
+    return radians;
+}
+
+// Function to convert radians to degrees for a vector of doubles
+std::vector<double> rad_to_deg(const std::vector<double>& radians) {
+    std::vector<double> degrees;
+    degrees.reserve(radians.size());
+    for (double radian : radians) {
+        degrees.push_back(radian * (180.0 / PI));
+    }
+    return degrees;
+}
+
+// Function to convert meters to millimeters for a single double
+double m_to_mm(double meters) {
+    return meters * 1000.0;
+}
+
+// Function to convert millimeters to meters for a single double
+double mm_to_m(double millimeters) {
+    return millimeters / 1000.0;
+}
+
+// Function to convert meters to millimeters for a vector of doubles
+std::vector<double> m_to_mm(const std::vector<double>& meters) {
+    std::vector<double> millimeters;
+    millimeters.reserve(meters.size());
+    for (double meter : meters) {
+        millimeters.push_back(meter * 1000.0);
+    }
+    return millimeters;
+}
+
+// Function to convert millimeters to meters for a vector of doubles
+std::vector<double> mm_to_m(const std::vector<double>& millimeters) {
+    std::vector<double> meters;
+    meters.reserve(millimeters.size());
+    for (double mm : millimeters) {
+        meters.push_back(mm / 1000.0);
+    }
+    return meters;
+}
+
 class UR5_Service
 {
 public:
@@ -81,7 +141,7 @@ public:
         auto joint_state = ros::topic::waitForMessage<control_msgs::JointTrajectoryControllerState>("/eff_joint_traj_controller/state", nh, ros::Duration(1.0));
         if (joint_state) {
             response.joints_name = joint_state->joint_names;
-            response.posj = joint_state->actual.positions;
+            response.posj = rad_to_deg(joint_state->actual.positions);
         } else {
             ROS_WARN("Timeout while waiting for JointState message");
             return false;
@@ -95,13 +155,13 @@ public:
         try {
             // Get the transform from "base_link" to "wrist_3_link"
             tf_.lookupTransform(base_link, end_effector, ros::Time(0), transform);
-            response.posx.push_back(transform.getOrigin().getX());
-            response.posx.push_back(transform.getOrigin().getY());
-            response.posx.push_back(transform.getOrigin().getZ());
-            response.posx.push_back(transform.getRotation().getX()); 
-            response.posx.push_back(transform.getRotation().getY()); 
-            response.posx.push_back(transform.getRotation().getZ());
-            response.posx.push_back(transform.getRotation().getW());
+            response.posx.push_back(m_to_mm(transform.getOrigin().getX()));
+            response.posx.push_back(m_to_mm(transform.getOrigin().getY()));
+            response.posx.push_back(m_to_mm(transform.getOrigin().getZ()));
+            response.posx.push_back(rad_to_deg(transform.getRotation().getX())); 
+            response.posx.push_back(rad_to_deg(transform.getRotation().getY())); 
+            response.posx.push_back(rad_to_deg(transform.getRotation().getZ()));
+            response.posx.push_back(rad_to_deg(transform.getRotation().getW()));
         } catch (tf::TransformException& ex) {
             ROS_ERROR("Error getting transform: %s", ex.what());
             return false;
@@ -114,10 +174,10 @@ public:
     {
         // Step1: get current state 
         auto joint_state = ros::topic::waitForMessage<control_msgs::JointTrajectoryControllerState>("/eff_joint_traj_controller/state", nh, ros::Duration(1.0));
-        auto start = std::move(request.joints1);
-        auto end   = std::move(request.joints2);
-        auto max_vel = request.joints_vel;
-        auto max_acc = request.joints_acc;
+        auto start = std::move(deg_to_rad(request.joints1));
+        auto end   = std::move(deg_to_rad(request.joints2));
+        auto max_vel = deg_to_rad(request.joints_vel);
+        auto max_acc = deg_to_rad(request.joints_acc);
         double time_from_start = 3.0; // time to move robot from current position to start position
 
         // Take current state as start if no start input
@@ -132,13 +192,13 @@ public:
         if ((start.size() > 0 && start.size() != joint_state->joint_names.size()) || end.size() != joint_state->joint_names.size()) {
             ROS_ERROR("Check size of Start or End point");
             response.result = false;
-            return false;
+            return true;
         }
 
         if (max_vel == 0 || max_acc == 0) {
             ROS_ERROR("Velocity and Acceleration should be > 0");
             response.result = false;
-            return false;            
+            return true;            
         }
 
         // Set parameters for traj-gen
@@ -154,7 +214,12 @@ public:
         // Publish trajectory
         goal_joint_pub.publish(goal_traj);
         
-        response.result = true;
+        if (goal_traj.points.size() == 0) {
+            response.result = false;
+        } else {
+            response.result = true;
+        }
+        
         return true;
     }
 
@@ -162,10 +227,10 @@ public:
                         assignment_ur::CartesianSpaceMotion::Response &response)
     {
         auto joint_state = ros::topic::waitForMessage<control_msgs::JointTrajectoryControllerState>("/eff_joint_traj_controller/state", nh, ros::Duration(1.0));
-        auto start = std::move(request.point1);
-        auto end   = std::move(request.point2);
-        auto max_vel = request.linear_vel;
-        auto max_acc = request.linear_acc;
+        auto start = std::move(mm_to_m(request.point1));
+        auto end   = std::move(mm_to_m(request.point2));
+        auto max_vel = mm_to_m(request.linear_vel);
+        auto max_acc = mm_to_m(request.linear_acc);
         double time_from_start = 3.0; // time to move robot from current position to start position
 
         // Take current position as start if no start input
@@ -225,8 +290,13 @@ public:
 
         // Publish trajectory
         goal_joint_pub.publish(goal_traj);
+
+        if (goal_traj.points.size() == 0) {
+            response.result = false;
+        } else {
+            response.result = true;
+        }
         
-        response.result = true;
         return true;
     }
 

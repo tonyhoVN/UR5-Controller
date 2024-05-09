@@ -5,6 +5,7 @@ __ROS__ = True
 # from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 # from sensor_msgs.msg import JointState
 import rospy
+import math
 from assignment_ur.srv import *
 
 # Common Client 
@@ -54,7 +55,7 @@ def move_home():
     else:
         raise("Cannot move to home")
 
-def move_joint_space(joints1, joints2, joint_vel_max, joint_acc_max):
+def move_joint_space(joints1, joints2, joint_vel_max = 0.1, joint_acc_max = 0.1):
 
     msg = JointSpaceMotionRequest()
     msg.joints1 = joints1

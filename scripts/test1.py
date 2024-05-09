@@ -8,10 +8,10 @@ import os, sys
 from assignment_ur.srv import GetState
 
 import rospy 
-from UR5_API import ur5
+from UR5_API import *
 
 
-print(ur5.get_joint_name())
+print(get_joint_name())
 
 
     # listener = tf.TransformListener()
