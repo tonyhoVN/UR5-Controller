@@ -41,6 +41,10 @@ This package is built on ROS Melodic in Ubuntu18.04
         ```
         rosservice call /ur5_custom_service/move_home "{}"
         ```
+    * You can also check current joint position and cartesian position of end-effector w.r.t base link
+        ```
+        rosservice call /ur5_custom_service/get_robot_state "{}"
+        ```
 
 1. Joint space motion: perform trapezoidal motion between 2 point in joint space 
     * Input message will have form:    
