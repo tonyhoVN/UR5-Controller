@@ -1,13 +1,12 @@
 #!/usr/bin/env python
-from ntpath import join
 import rospy
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
-from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from control_msgs.msg import FollowJointTrajectoryAction
 from sensor_msgs.msg import JointState
 from actionlib import SimpleActionClient
 import math
 
-HOME = [0.0, -math.pi/2, 0.0, -math.pi/2, 0.0, 0.0] # Home position of robot
+HOME = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0] # Home position of robot
 
 class UR5JointController:
     def __init__(self):

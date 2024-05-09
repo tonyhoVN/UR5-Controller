@@ -1,6 +1,6 @@
-float64[] joints1 # start position (rad)
-float64[] joints2 # end position (rad)
-float64 joints_vel # maximum joint velocity (rad)
-float64 joints_acc # maximum joint acceleration (rad)
+float64[] joints1 # start position (deg)
+float64[] joints2 # end position (deg)
+float64 joints_vel # maximum joint velocity (deg/2)
+float64 joints_acc # maximum joint acceleration (deg/s^2)
 ---
 bool result

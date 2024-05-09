@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-__ROS__ = True
+# __ROS__ = True
 # from geometry_msgs.msg import Point
 # from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 # from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
@@ -55,8 +55,14 @@ def move_home():
     else:
         raise("Cannot move to home")
 
-def move_joint_space(joints1, joints2, joint_vel_max = 0.1, joint_acc_max = 0.1):
-
+def move_joint_space(joints1=[], joints2=[], joint_vel_max = 30, joint_acc_max = 100):
+    """
+    Move robot in joint space 
+    joints1: list of joints in start position
+    joints2: list of joints in end position
+    joint_vel_max: maximum joint velocity
+    joint_acc_max: maximum joint acceleration
+    """
     msg = JointSpaceMotionRequest()
     msg.joints1 = joints1
     msg.joints2 = joints2
@@ -70,7 +76,14 @@ def move_joint_space(joints1, joints2, joint_vel_max = 0.1, joint_acc_max = 0.1)
     else:
         raise("Cannot make the movement")
 
-def move_cartesian_space(point1, point2, linear_vel_max, linear_acc_max):
+def move_cartesian_space(point1=[], point2=[], linear_vel_max=50, linear_acc_max=100):
+    """
+    Move robot in cartesian space 
+    point1: point [x,y,z] in start position
+    point2: point [x,y,z] in end position
+    joint_vel_max: maximum linear velocity
+    joint_acc_max: maximum linear acceleration
+    """
     msg = CartesianSpaceMotionRequest()
     msg.point1 = point1
     msg.point2 = point2
@@ -82,8 +95,3 @@ def move_cartesian_space(point1, point2, linear_vel_max, linear_acc_max):
         print("Move success")
     else:
         raise("Cannot make the movement")
-
-
-
-move_home()
-move_cartesian_space([0.1,0,0.5], [0.1,0,0.3], 0.2, 0.2)

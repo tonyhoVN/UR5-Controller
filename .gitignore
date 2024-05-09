@@ -7,13 +7,5 @@ lib/
 __pycache__
 *.pyc
 
-# Ignore compiled binaries
-*.o
-*.out
-*.exe
-*.dll
-*.so
-*.dylib
-
 # Catkin custom files
 CATKIN_IGNORE

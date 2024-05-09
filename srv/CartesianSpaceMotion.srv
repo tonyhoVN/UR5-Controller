@@ -1,6 +1,6 @@
-float64[] point1 # start position (m)
-float64[] point2 # end position (m)
-float64 linear_vel # maximum linear velocity (m/s)
-float64 linear_acc # maximum linear acceleration (m/s^2)
+float64[] point1 # start position xyz (mm)
+float64[] point2 # end position xyz (mm)
+float64 linear_vel # maximum linear velocity (mm/s)
+float64 linear_acc # maximum linear acceleration (mm/s^2)
 ---
 bool result

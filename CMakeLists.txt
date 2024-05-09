@@ -41,7 +41,6 @@ add_library(trajectory_generator
 )
 target_link_libraries(trajectory_generator
   ${catkin_LIBRARIES}
-  # ${orocos_kdl_INCLUDE_DIRS}
 )
 
 ## Declare a catkin package
@@ -56,7 +55,6 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  # ${orocos_kdl_INCLUDE_DIRS}
 )
 
 #############
@@ -66,7 +64,6 @@ add_executable(UR5_service src/UR5_service.cpp)
 target_link_libraries(UR5_service 
   ${catkin_LIBRARIES}
   trajectory_generator
-  # ${orocos_kdl_LIBRARIES}
 )
 add_dependencies(UR5_service assignment_ur_gencpp)
 
@@ -74,55 +71,34 @@ add_executable(test_lib src/test_lib.cpp)
 target_link_libraries(test_lib 
   ${catkin_LIBRARIES} 
   trajectory_generator
-  # ${orocos_kdl_LIBRARIES}
 )
 
 #############
 ## Install ##
 #############
-
-# Install Trajectory_generator library
-install(DIRECTORY include/${PROJECT_NAME}/
-    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-    FILES_MATCHING PATTERN "*.h"
-    PATTERN ".svn" EXCLUDE
-)
-
-install(TARGETS trajectory_generator 
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-
-# # Python file
-
-catkin_install_python(PROGRAMS scripts/assignment1.py
+catkin_install_python(PROGRAMS scripts/example_api.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-# catkin_install_python(PROGRAMS scripts/test1.py
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
 catkin_install_python(PROGRAMS 
-  # UR5_API/__init__.py  
-  UR5_API/UR5_API.py
+  UR5_API/UR5_API.py  
+  UR5_API/__init__.py  
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 # Additional files 
-install(DIRECTORY UR5_API/
+install(DIRECTORY UR5_API
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/UR5_API
   FILES_MATCHING PATTERN "*.py"
   PATTERN "__pycache__" EXCLUDE
 )
 
-install(DIRECTORY
-  urdf 
-  config 
-  launch
-  srv
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+# install(DIRECTORY
+#   urdf 
+#   config 
+#   launch
+#   srv
+#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 
 
