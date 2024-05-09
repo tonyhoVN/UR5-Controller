@@ -23,7 +23,8 @@ This package is built on ROS Melodic in Ubuntu18.04
         roslaunch assignment_ur assignment1.launch
         ```
     - Step2: go to gazebo gui and press the "play" button on the bottom tool panel to start the simulation
-    - ![Image Description](image/gazebo_gui.jpg)
+        
+        ![Image Description](image/gazebo_gui.jpg)
 
 ### Problem2: Joint Space and Cartesian Space Trajectory 
 - The trajectory in this problem is generated as trapezoidal profile. For simple execution, it is assumed all joints share the same velocity and acceleration. The time step between points in trajectory is 0.2 seconds. 
@@ -74,7 +75,8 @@ This package is built on ROS Melodic in Ubuntu18.04
 
 ### Problem4: Integrate LLM into system 
 - This session proposes a method to use LLM model to callback API functions in previous session with input commands from users. The LLM uses the pre-defined prompt to generate python functions directly from user commands without retrain the model. The architecture of system is shown in following figure.
-    - ![Image Description](image/architecture.png)
+    
+    ![Image Description](image/architecture.png)
 
 - Method: put the given prompt in to any LLM model (ChatGPT, Gemini, Co-Pilot) to make it become a customized code generator from text commands. 
     ```
@@ -89,4 +91,5 @@ This package is built on ROS Melodic in Ubuntu18.04
     The command with start from the next input.
     ```
 - This picture shows the example of using such prompt in ChatGPT model.
-    - ![Image Description](image/chatgpt_example.jpg)
+    
+    ![Image Description](image/chatgpt_example.jpg)
