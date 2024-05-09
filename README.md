@@ -1,5 +1,5 @@
-# ASSIGNMENT OF TONY HO
-This package is used for ROS Melodic in Ubuntu18.04
+# UR5 Robot Controller
+This package is built on ROS Melodic in Ubuntu18.04
 
 ## I. Setup Environment
 1. Clone package into src of your workspace
@@ -19,26 +19,27 @@ This package is used for ROS Melodic in Ubuntu18.04
 - Joints of robot move as sine wave function around its home position (vertical position). The input signal has amplitude of 30 degrees and angular velocity is 90 degree/second  
 - Execution process:
     - Step1: Launch simulation environment
-    ```
-    roslaunch assignment_ur assignment1.launch
-    ```
-    - Step2: Start simulation: go to gazebo gui and press the "play" button to see the result
+        ```
+        roslaunch assignment_ur assignment1.launch
+        ```
+    - Step2: go to gazebo gui and press the "play" button on the bottom tool panel to start the simulation
+    - ![Image Description](image/gazebo_gui.jpg)
 
 ### Problem2: Joint Space and Cartesian Space Trajectory 
 - The trajectory in this problem is generated as trapezoidal profile. For simple execution, it is assumed all joints share the same velocity and acceleration. The time step between points in trajectory is 0.2 seconds. 
 - Execution process:
     - Step1: Launch simulation environment
-    ```
-    roslaunch assignment_ur assignment2.launch
-    ```
+        ```
+        roslaunch assignment_ur assignment2.launch
+        ```
     - Step2: go to gazebo gui and press the "play" button to activate simulation
     - Step3: Call the following services to make movements
 
 0. Additional service: move robot to home position to advoid singularity position 
     * You can move robot to home position by command
-    ```
-    rosservice call /ur5_custom_service/move_home "{}"
-    ```
+        ```
+        rosservice call /ur5_custom_service/move_home "{}"
+        ```
 
 1. Joint space motion: perform trapezoidal motion between 2 point in joint space 
     * Input message will have form:    
@@ -72,9 +73,10 @@ This package is used for ROS Melodic in Ubuntu18.04
     ```
 
 ### Problem4: Integrate LLM into system 
-- This session proposed method to use LLM model to callback API functions in previous session with input commands from users. The LLM uses the pre-defined prompt to generate python functions directly from user commands without retrain the model. The architecture of system is shown in following figure.
+- This session proposes a method to use LLM model to callback API functions in previous session with input commands from users. The LLM uses the pre-defined prompt to generate python functions directly from user commands without retrain the model. The architecture of system is shown in following figure.
+    - ![Image Description](image/architecture.png)
 
-- Method: put the given prompt in to any LLM model (ChatGPT, Gemini, Co-Pilot) to make it become custom code generator from text commands. 
+- Method: put the given prompt in to any LLM model (ChatGPT, Gemini, Co-Pilot) to make it become a customized code generator from text commands. 
     ```
     You are a tool to convert user commands into given coding functions for controlling robotics manipulator. 
 
@@ -86,4 +88,5 @@ This package is used for ROS Melodic in Ubuntu18.04
 
     The command with start from the next input.
     ```
-- This picture shows the example of using such prompt in ChatGPT model
+- This picture shows the example of using such prompt in ChatGPT model.
+    - ![Image Description](image/chatgpt_example.jpg)
